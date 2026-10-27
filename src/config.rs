@@ -2375,6 +2375,9 @@ impl UserDefaultConfig {
             keys::OPTION_CUSTOM_IMAGE_QUALITY => self.get_num_string(key, 50.0, 10.0, 0xFFF as f64),
             keys::OPTION_CUSTOM_FPS => self.get_num_string(key, 30.0, 5.0, 120.0),
             keys::OPTION_ENABLE_FILE_COPY_PASTE => self.get_string(key, "Y", vec!["", "N"]),
+            keys::OPTION_SHOW_REMOTE_CURSOR => self.get_string(key, "Y", vec!["", "N"]),
+            keys::OPTION_FOLLOW_REMOTE_CURSOR => self.get_string(key, "Y", vec!["", "N"]),
+            keys::OPTION_DISABLE_AUDIO => self.get_string(key, "Y", vec!["", "N"]),
             keys::OPTION_EDGE_SCROLL_EDGE_THICKNESS => self.get_num_string(key, 100, 20, 150),
             keys::OPTION_TRACKPAD_SPEED => self.get_num_string(key, 100, 10, 1000),
             _ => self
@@ -2873,7 +2876,9 @@ pub fn is_disable_installation() -> bool {
 // flutter: flutter/lib/common.dart -> option2bool()
 // sciter: Does not have the function, but it should be kept the same.
 pub fn option2bool(option: &str, value: &str) -> bool {
-    if option.starts_with("enable-") {
+    if option == keys::OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION {
+        value != "N"
+    } else if option.starts_with("enable-") {
         value != "N"
     } else if option.starts_with("allow-")
         || option == "stop-service"
@@ -2929,6 +2934,10 @@ pub mod keys {
     pub const OPTION_DISABLE_CHANGE_PERMANENT_PASSWORD: &str = "disable-change-permanent-password";
     pub const OPTION_DISABLE_CHANGE_ID: &str = "disable-change-id";
     pub const OPTION_DISABLE_UNLOCK_PIN: &str = "disable-unlock-pin";
+    pub const OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION: &str = "allow-remote-config-modification";
+    pub const OPTION_SHOW_REMOTE_CURSOR: &str = "show_remote_cursor";
+    pub const OPTION_FOLLOW_REMOTE_CURSOR: &str = "follow_remote_cursor";
+    pub const OPTION_DISABLE_AUDIO: &str = "disable_audio";
 
     // proxy settings
     // The following options are not real keys, they are just used for custom client advanced settings.
