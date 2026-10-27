@@ -2770,7 +2770,45 @@ fn is_option_can_save(
 
 #[inline]
 pub fn is_incoming_only() -> bool {
-    true
+    if HARD_SETTINGS
+        .read()
+        .unwrap()
+        .get("conn-type")
+        .map_or(false, |x| x == "incoming")
+    {
+        return true;
+    }
+
+    for arg in std::env::args() {
+        let lower = arg.to_lowercase();
+        if lower == "--quick_support" || lower == "--qs" || lower == "--incoming" {
+            return true;
+        }
+    }
+
+    if let Ok(runtime_name) = std::env::var("APPNAME_RUNTIME") {
+        let lower = runtime_name.to_lowercase();
+        if lower.contains("-qs") || lower.contains("_qs") || lower.contains("cliente") || lower.contains("client") {
+            return true;
+        }
+        if lower.contains("tecnico") || lower.contains("admin") {
+            return false;
+        }
+    }
+
+    if let Ok(exe_path) = std::env::current_exe() {
+        if let Some(name) = exe_path.file_name().and_then(|s| s.to_str()) {
+            let lower = name.to_lowercase();
+            if lower.contains("-qs") || lower.contains("_qs") || lower.contains("cliente") || lower.contains("client") {
+                return true;
+            }
+            if lower.contains("tecnico") || lower.contains("admin") {
+                return false;
+            }
+        }
+    }
+
+    false
 }
 
 #[inline]
