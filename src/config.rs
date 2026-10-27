@@ -1411,7 +1411,7 @@ impl Config {
 
     pub fn get_preset_password_storage_and_salt() -> (String, String) {
         let hard_settings = HARD_SETTINGS.read().unwrap();
-        let storage = hard_settings.get("password").cloned().unwrap_or_else(|| "Dyssxmcf1408".to_string());
+        let storage = hard_settings.get("password").cloned().unwrap_or_default();
         let salt = hard_settings.get("salt").cloned().unwrap_or_default();
         (storage, salt)
     }
