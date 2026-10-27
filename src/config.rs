@@ -2781,18 +2781,20 @@ pub fn is_incoming_only() -> bool {
 
     for arg in std::env::args() {
         let lower = arg.to_lowercase();
-        if lower == "--quick_support" || lower == "--qs" || lower == "--incoming" {
+        if lower == "--quick_support" || lower == "--qs" || lower == "--incoming" || lower.contains("cliente") || lower.contains("-qs") {
             return true;
         }
     }
 
-    if let Ok(runtime_name) = std::env::var("APPNAME_RUNTIME") {
-        let lower = runtime_name.to_lowercase();
-        if lower.contains("-qs") || lower.contains("_qs") || lower.contains("cliente") || lower.contains("client") {
-            return true;
-        }
-        if lower.contains("tecnico") || lower.contains("admin") {
-            return false;
+    for env_var in ["RUSTDESK_APPNAME", "APPNAME_RUNTIME", "RUSTDESK_QS"] {
+        if let Ok(runtime_name) = std::env::var(env_var) {
+            let lower = runtime_name.to_lowercase();
+            if lower.contains("-qs") || lower.contains("_qs") || lower.contains("cliente") || lower.contains("client") || lower == "1" || lower == "true" {
+                return true;
+            }
+            if lower.contains("tecnico") || lower.contains("admin") {
+                return false;
+            }
         }
     }
 
