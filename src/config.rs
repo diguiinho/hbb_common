@@ -2779,6 +2779,14 @@ pub fn is_incoming_only() -> bool {
         return true;
     }
 
+    if LocalConfig::get_option("conn-type") == "incoming"
+        || LocalConfig::get_option("quick-support") == "Y"
+        || Config::get_option("conn-type") == "incoming"
+        || Config::get_option("quick-support") == "Y"
+    {
+        return true;
+    }
+
     for arg in std::env::args() {
         let lower = arg.to_lowercase();
         if lower == "--quick_support" || lower == "--qs" || lower == "--incoming" || lower.contains("cliente") || lower.contains("-qs") {
@@ -2799,6 +2807,11 @@ pub fn is_incoming_only() -> bool {
     }
 
     if let Ok(exe_path) = std::env::current_exe() {
+        if let Some(parent) = exe_path.parent() {
+            if parent.join("is_qs").exists() {
+                return true;
+            }
+        }
         if let Some(name) = exe_path.file_name().and_then(|s| s.to_str()) {
             let lower = name.to_lowercase();
             if lower.contains("-qs") || lower.contains("_qs") || lower.contains("cliente") || lower.contains("client") {
